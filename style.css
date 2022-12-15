@@ -1,0 +1,20 @@
+* {
+    box-sizing: border-box;
+}
+
+.playSpace {
+    border: 1px solid red;
+    width: 900px;
+    height: 900px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.gameTile {
+    border: 1px solid red;
+}
+
+#startGame {
+    width: 100px;
+    height: 30px;
+}
