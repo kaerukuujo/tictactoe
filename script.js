@@ -1,56 +1,48 @@
+// gameboard
+let game_board = (function(){
+    const boardArray = ['', '', '', '', '', '', '', '', ''];
+    let playerTurn = false;
+    let playerIcon = 'x';
+    let computerIcon = 'o';
 
+    let gameTiles = document.querySelectorAll('.gameTile');
+    let startScreen = document.querySelector('.preGame');
+    let playScreen = document.querySelector('.playSpace');
 
-const gameBoard = (function(){
-    let gameBoard = [['', '', ''], ['', '', ''], ['', '', '']];
+    const startingScreen = (() => {
+        startScreen.setAttribute('data-state', 'active');
+        console.log("wobwobwob");
+    });
 
-    const resetGameBoard = (() => {
-        gameBoard = [['', '', ''], ['', '', ''], ['', '', '']];
-        return gameBoard;
-    })();
+    const gameStart = (() => {
+        playScreen.setAttribute('data-state', 'active');
+        //reset the gameBoard
+        for(let i = 0; i < gameTiles.length; i++){
+            gameTiles[i].innerHTML = "";
+        }
 
-    return { gameBoard, resetGameBoard}
+        console.log("wobwobwobwobwob")
+        
+    });
+
+    return { startingScreen, gameStart };
+
 })();
 
-const displayController = (function(){
+game_board.gameStart();
 
-    function setState() {
-        let gameSpace = document.querySelectorAll('.gameState');
-        let preGame = document.querySelector('.preGame');
-    let playSpace = document.querySelector('.playSpace');
-    let postGame = document.querySelector('.postGame');
+//gameflow 
 
-    const preGameState = (() => {
-        for(let i = 0; i < gameSpace.length; i++){
-            gameSpace[i].setAttribute("data-state", "inactive");
-        }
-        preGame.setAttribute("data-state", "active");
-        console.log("pregame State");
-    })();
+//player creator 
 
-    const playGameState = (() => {
-        for(let i = 0; i < gameSpace.length; i++){
-            gameSpace[i].setAttribute("data-state", "inactive");
-        }
-        playSpace.setAttribute("data-state", "active");
-        console.log("playgame State");
-    })();
 
-    const postGameState = (() => {
-        for(let i = 0; i < gameSpace.length; i++){
-            gameSpace[i].setAttribute("data-state", "inactive");
-        }
-        postGame.setAttribute("data-state", "active");
-        console.log("postgame State");
-    })();
-    }
 
-    
-})();
 
-const createPlayer = (playerName, icon) => {
-    const playerIcon = icon;
-    return { playerName, playerIcon };
-};
+
+
+
+
+
 
 
 

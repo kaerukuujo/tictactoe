@@ -9,23 +9,24 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    <div class="gameState" class="preGame" data-state="inactive">
+    <div class="preGame" class="gameState" data-state="inactive">
         <div class="selectIcon">
             <section class="iconSelect" data-icon="X">X</section>
             <section class="iconSelect" data-icon="O">O</section>
         </div>
-        <Button>Start Game</Button>
+        <Button id="startGame">Start Game</Button>
+        <section class="playerSelection"></section>
     </div>
-    <div class="gameState" class="playSpace" data-state="inactive">
-        <div class="gameTile" data-id="0"></div>
-        <div class="gameTile" data-id="1"></div>
-        <div class="gameTile" data-id="2"></div>
-        <div class="gameTile" data-id="3"></div>
-        <div class="gameTile" data-id="4"></div>
-        <div class="gameTile" data-id="5"></div>
-        <div class="gameTile" data-id="6"></div>
-        <div class="gameTile" data-id="7"></div>
-        <div class="gameTile" data-id="8"></div>
+    <div class="playSpace" class="gameState" data-state="inactive">
+        <div class="gameTile" data-icon="0">a</div>
+        <div class="gameTile" data-icon="1">b</div>
+        <div class="gameTile" data-icon="2">c</div>
+        <div class="gameTile" data-icon="3">d</div>
+        <div class="gameTile" data-icon="4">e</div>
+        <div class="gameTile" data-icon="5">f</div>
+        <div class="gameTile" data-icon="6">g</div>
+        <div class="gameTile" data-icon="7">h</div>
+        <div class="gameTile" data-icon="8">i</div>
     </div>
     <div class="gameState" class="postGame" data-state="inactive">
         <button>Reset Game</button>
