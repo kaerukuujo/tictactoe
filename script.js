@@ -55,6 +55,8 @@ let game_board = (function(){
     const gameStart = (() => {
         startScreen.setAttribute('data-state', 'inactive');
         playScreen.setAttribute('data-state', 'active');
+        computerIcon = game_Flow.setCompIcon(playerIcon);
+        console.log(computerIcon);
         //reset the gameBoard
         for(let i = 0; i < gameTiles.length; i++){
             gameTiles[i].addEventListener("click", () =>{
@@ -112,7 +114,7 @@ let game_board = (function(){
         return boardArray;
     })();
 
-    return { startingScreen, gameStart, getPlayerTurn, endingScreen };
+    return { startingScreen, gameStart, getPlayerTurn, getBoardArray, endingScreen };
 
 
 })();
@@ -128,6 +130,14 @@ let game_board = (function(){
 
 let game_Flow = (function(){
     game_board.startingScreen();
+
+    const setCompIcon = ((playerIcon) => {
+        if(playerIcon === "X"){
+            return "O";
+        } else {
+            return "X"
+        }
+    });
 
     const winCondition = ((playerTurn, boardArray) => {
         // console.log(playerTurn);
@@ -203,12 +213,19 @@ let game_Flow = (function(){
         }
     });
 
-    return { winCondition };
+    const aiTurn = (() => {
+        for(let i = 0; i < game_board.getBoardArray(); i++){
+            console.log("wob");
+        }
+        game_board.getBoardArray();
+    });
+
+    return { winCondition, setCompIcon };
 })();
 
 //player creator 
 
-//player factory that returns a players name, icon, whether theyre going first or second
+//player factory that returns a players name, icon, whether they're going first or second
     //if only 1 player is set, have player 2 be run by AI. 
 
 
