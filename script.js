@@ -3,20 +3,24 @@
 // gameboard
 let game_board = (function(){
     let boardArray = ['', '', '', '', '', '', '', '', ''];
-    let playerTurn = false;
-    let playerIcon = "O";
-    let computerIcon = 'o';
+    let playerTurn = true;
+    let playerIcon = "null";
+    let computerIcon = "null";
 
     let gameTiles = document.querySelectorAll('.gameTile');
     let startScreen = document.querySelector('.preGame');
     let playScreen = document.querySelector('.playSpace');
+    let endScreen = document.querySelector('.endGame');
 
-    const startingScreen = (() => {
+    const startingScreen = (() => {        
+        endScreen.setAttribute('data-state', "inactive");
         startScreen.setAttribute('data-state', 'active');
         console.log("wobwobwob");
         //add styling to the 2 big buttons for player to choose icon
         let playerChoiceX = document.getElementById("X");
         let playerChoiceO = document.getElementById("O");
+        playerChoiceO.setAttribute("data-sel", "n");
+        playerChoiceX.setAttribute("data-sel", "n");
         playerChoiceX.addEventListener("click", () => {
             playerIcon = "X";
             playerChoiceO.setAttribute("data-sel", "n");
@@ -39,7 +43,12 @@ let game_board = (function(){
         //add button to change state to gameStart
         let startButton = document.getElementById("startGame");
         startButton.addEventListener("click", () => {
-            gameStart();
+            if(playerIcon !== 'null'){
+                gameStart();
+            } else {
+                console.log("Choose an icon");
+            }
+            
         })
     });
 
@@ -50,7 +59,7 @@ let game_board = (function(){
         for(let i = 0; i < gameTiles.length; i++){
             gameTiles[i].addEventListener("click", () =>{
                 //check tile hasn't got anything on it
-                    if(gameTiles[i].firstChild === null){
+                    if(gameTiles[i].firstChild === null){                        
                         const icon = document.createElement("img");
                         if(playerIcon === "X"){
                             icon.src = "images/X.png";
@@ -65,41 +74,136 @@ let game_board = (function(){
                     } else {
                         console.log("spot taken");
                     }
-                //add icon to board
-                    //check which icon playerIcon is set to
                 
                 //update boardArray with players choice
+                boardArray[i] = playerIcon;
                 //run function to check if win condition has been met
+                game_Flow.winCondition(playerTurn, boardArray);
             });
             gameTiles[i].innerHTML = boardArray[i];
 
             
         }
-
         console.log("wobwobwobwobwob")
         
     });
 
-    return { startingScreen, gameStart };
+    const endingScreen = ((winner) => {
+        playScreen.setAttribute('data-state', 'inactive');
+        endScreen.setAttribute('data-state', 'active');
+        endScreen.querySelector('p').innerHTML = `The ${winner} Wins!`;
+        const resetButton = document.getElementById("endGame");
+        resetButton.addEventListener("click", () => {
+            boardArray = ['', '', '', '', '', '', '', '', ''];
+            playerIcon = "null";
+            computerIcon = "null";            
+            startingScreen();
+        });
 
-    //create function to checks board for if a tile can be placed there.
+        console.log("endScreen");
+    });
+
+
+    const getPlayerTurn = (() => {
+        return playerTurn;
+    })();
+
+    const getBoardArray = (() => {
+        return boardArray;
+    })();
+
+    return { startingScreen, gameStart, getPlayerTurn, endingScreen };
 
 
 })();
-game_board.startingScreen();
+// game_board.startingScreen();
 
 //gameflow 
+    //game starts
+    //player moves
+    //check win condition
+    //computer moves
+    //check win condition 
+    //back to player moves
 
-let displayController = (function(){
-    //intro gamestate
-        //move from intro to game state only after players have been assigned and icons chosen
-    //playing gamestate
-        //update loop through array after something gets added to board
-        //if win condition is met, update winner variable and move to game end state
-    //game end gamestate
-        //display winner and go back to intro gameState after reset has been pressed.
+let game_Flow = (function(){
+    game_board.startingScreen();
 
+    const winCondition = ((playerTurn, boardArray) => {
+        // console.log(playerTurn);
+        console.log(boardArray);
+        if(boardArray[0] === "X" && boardArray[3] === "X" && boardArray[6] === "X" 
+        || boardArray[0] === "O" && boardArray[3] === "O" && boardArray[6] === "O"){
+            //go into end state, use the winner as parameter
+            if(playerTurn === true){
+                game_board.endingScreen("Player");
+            } else {
+                game_board.endingScreen("Computer");
+            }
+            console.log("winner");
+        } else if(boardArray[1] === "X" && boardArray[4] === "X" && boardArray[7] === "X" 
+        || boardArray[1] === "O" && boardArray[4] === "O" && boardArray[7] === "O") {
+            //go into end state, use the winner as parameter
+            if(playerTurn === true){
+                game_board.endingScreen("Player");
+            } else {
+                game_board.endingScreen("Computer");
+            }
+            console.log("winner");
+        } else if(boardArray[2] === "X" && boardArray[5] === "X" && boardArray[8] === "X" 
+        || boardArray[2] === "O" && boardArray[5] === "O" && boardArray[8] === "O") {
+            //go into end state, use the winner as parameter
+            if(playerTurn === true){
+                game_board.endingScreen("Player");
+            } else {
+                game_board.endingScreen("Computer");
+            }
+            console.log("winner");
+        } else if(boardArray[0] === "X" && boardArray[1] === "X" && boardArray[2] === "X" 
+        || boardArray[0] === "O" && boardArray[1] === "O" && boardArray[2] === "O") {
+            //go into end state, use the winner as parameter
+            if(playerTurn === true){
+                game_board.endingScreen("Player");
+            } else {
+                game_board.endingScreen("Computer");
+            }
+            console.log("winner");
+        } else if(boardArray[3] === "X" && boardArray[4] === "X" && boardArray[5] === "X" 
+        || boardArray[3] === "O" && boardArray[4] === "O" && boardArray[5] === "O") {
+            //go into end state, use the winner as parameter
+            if(playerTurn === true){
+                game_board.endingScreen("Player");
+            } else {
+                game_board.endingScreen("Computer");
+            }
+            console.log("winner");
+        } else if(boardArray[6] === "X" && boardArray[7] === "X" && boardArray[8] === "X" 
+        || boardArray[6] === "O" && boardArray[7] === "O" && boardArray[8] === "O") {
+            //go into end state, use the winner as parameter
+            if(playerTurn === true){
+                game_board.endingScreen("Player");
+            } else {
+                game_board.endingScreen("Computer");
+            }
+            console.log("winner");
+        } else if(boardArray[0] === "X" && boardArray[4] === "X" && boardArray[8] === "X" 
+        || boardArray[0] === "O" && boardArray[4] === "O" && boardArray[8] === "O") {
+            //go into end state, use the winner as parameter
+            if(playerTurn === true){
+                game_board.endingScreen("Player");
+            } else {
+                game_board.endingScreen("Computer");
+            }
+            console.log("winner");
+        } else if(boardArray[2] === "X" && boardArray[4] === "X" && boardArray[6] === "X" 
+        || boardArray[2] === "O" && boardArray[4] === "O" && boardArray[6] === "O") {
+            //go into end state, use the winner as parameter
+            
+            console.log("winner");
+        }
+    });
 
+    return { winCondition };
 })();
 
 //player creator 
