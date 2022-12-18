@@ -54,3 +54,7 @@
 [data-state*="inactive"] {
     display: none;
 }
+
+[data-sel*="y"] {
+    border: 2px solid green;
+}
