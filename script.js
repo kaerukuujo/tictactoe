@@ -5,6 +5,8 @@ let game_board = (function(){
     let boardArray = ['', '', '', '', '', '', '', '', ''];
     let playerIcon = "null";
     let computerIcon = "null";
+    let lastIcon = "";
+    let finalWinner = null;
     let randomTile = 0;
 
     let gameTiles = document.querySelectorAll('.gameTile');
@@ -71,35 +73,39 @@ let game_board = (function(){
                             icon.src = "images/O.png";
                         }                        
                         icon.setAttribute('class', 'icon');
-                        if(gameTiles[i].firstChild !== null){
-                            gameTiles[i].firstChild.remove();
-                        }              
-                        gameTiles[i].appendChild(icon);
+                        if(gameTiles[i].firstChild === null){
+                            currentTurn = "Player";
+                            gameTiles[i].appendChild(icon);
+                            boardArray[i] = playerIcon;
+                            lastIcon = playerIcon;
+                            game_Flow.winCondition(boardArray);   
+                            if(finalWinner === null){
+                                aiTurn();  
+                            } else {
+                                console.log("someones won");
+                            }                    
+                                                      
+                        } else {
+                            console.log("spot taken");
+                        }           
                     } else {
                         console.log("spot taken");
                     }
-                
-                //update boardArray with players choice
-                boardArray[i] = playerIcon;
-                //run function to check if win condition has been met
-                game_Flow.winCondition(true, boardArray);
-                aiTurn();
             });
-            gameTiles[i].innerHTML = boardArray[i];
-
-            
+            gameTiles[i].innerHTML = boardArray[i];            
         }
         console.log("wobwobwobwobwob")
         
     });
 
-    const endingScreen = ((winner) => {
+    const endingScreen = (() => {
+        currentTurn = "";
         playScreen.setAttribute('data-state', 'inactive');
         endScreen.setAttribute('data-state', 'active');
-        endScreen.querySelector('p').innerHTML = `The ${winner} Wins!`;
         const resetButton = document.getElementById("endGame");
         resetButton.addEventListener("click", () => {            
-            wipeBoard;           
+            wipeBoard;
+            finalWinner = null;           
             startingScreen();
         });
 
@@ -107,26 +113,28 @@ let game_board = (function(){
     });
 
     const aiTurn = (() => {
+        currentTurn = "Computer";
         randomTile = getRandomInt(9);
-        let computerImage = document.createElement("img");
-        computerImage.setAttribute('class', 'icon');
-        if(computerIcon === "X"){
-            computerImage.src = "images/X.png";
-        } else {
-            computerImage.src = "images/O.png";
-        }
-
-        for(let i = 0; i < 1000; i++){
-            if(gameTiles[randomTile].firstChild !== null){
-                randomTile = getRandomInt(9);
+            let computerImage = document.createElement("img");
+            computerImage.setAttribute('class', 'icon');
+            if(computerIcon === "X"){
+                computerImage.src = "images/X.png";
             } else {
-                gameTiles[randomTile].appendChild(computerImage);
-                boardArray[randomTile] = computerIcon;
-                break;
+                computerImage.src = "images/O.png";
             }
-        }
-        
-        game_Flow.winCondition(false, boardArray);         
+
+            for(let i = 0; i < 1000; i++){            
+                if(gameTiles[randomTile].firstChild !== null){
+                    randomTile = getRandomInt(9);
+                } else {
+                    gameTiles[randomTile].appendChild(computerImage);
+                    boardArray[randomTile] = computerIcon;
+                    break;
+                }
+            }
+            lastIcon = computerIcon;        
+            game_Flow.winCondition(boardArray); 
+            currentTurn = "Player";      
     });
 
     const wipeBoard = (() => {
@@ -136,17 +144,32 @@ let game_board = (function(){
         }
         playerIcon = "null";
         computerIcon = "null";
-        randomTile = 0;
-        playerTurn = true;           
+        currentTurn = "";
+        randomTile = 0;  
+        finalWinner = null;         
         
     })();
+
+    function setWinner(winner) {        
+        finalWinner = 1;
+        if(lastIcon === playerIcon){
+            endScreen.querySelector('p').innerHTML = `The Player Wins!`;
+        } else if(lastIcon === computerIcon){
+            endScreen.querySelector('p').innerHTML = `The Computer Wins!`;
+        }
+        endingScreen();
+    }
 
     function getRandomInt(max) {
         return Math.floor(Math.random() * max);
     }
 
-    const getPlayerTurn = (() => {
-        return playerTurn;
+    const getCurrentTurn = (() => {
+        return currentTurn;
+    })();
+
+    const setCurrentTurn = ((setValue) => {
+        currentTurn = setValue;
     })();
 
     const getBoardArray = (() => {
@@ -159,7 +182,7 @@ let game_board = (function(){
 
     
 
-    return { startingScreen, gameStart, getPlayerTurn, getBoardArray, endingScreen, getComputerIcon, wipeBoard };
+    return { startingScreen, gameStart, getCurrentTurn, getBoardArray, endingScreen, getComputerIcon, wipeBoard, setWinner };
 
 
 })();
@@ -184,99 +207,29 @@ let game_Flow = (function(){
         }
     });
 
-    const winCondition = ((playerTurn, boardArray) => {
-        // console.log(playerTurn);
-        console.log(boardArray);
+    const winCondition = ((boardArray) => {
         if(boardArray[0] === "X" && boardArray[3] === "X" && boardArray[6] === "X" 
-        || boardArray[0] === "O" && boardArray[3] === "O" && boardArray[6] === "O"){
-            //go into end state, use the winner as parameter
-            if(playerTurn === true){
-                game_board.endingScreen("Player");
-            } else {
-                game_board.endingScreen("Computer");
-            }
-            game_board.wipeBoard();
-            console.log("winner");
-        } else if(boardArray[1] === "X" && boardArray[4] === "X" && boardArray[7] === "X" 
-        || boardArray[1] === "O" && boardArray[4] === "O" && boardArray[7] === "O") {
-            //go into end state, use the winner as parameter
-            if(playerTurn === true){
-                game_board.endingScreen("Player");
-            } else {
-                game_board.endingScreen("Computer");
-            }
-            game_board.wipeBoard();
-            console.log("winner");
-        } else if(boardArray[2] === "X" && boardArray[5] === "X" && boardArray[8] === "X" 
-        || boardArray[2] === "O" && boardArray[5] === "O" && boardArray[8] === "O") {
-            //go into end state, use the winner as parameter
-            if(playerTurn === true){
-                game_board.endingScreen("Player");
-            } else {
-                game_board.endingScreen("Computer");
-            }
-            game_board.wipeBoard();
-            console.log("winner");
-        } else if(boardArray[0] === "X" && boardArray[1] === "X" && boardArray[2] === "X" 
-        || boardArray[0] === "O" && boardArray[1] === "O" && boardArray[2] === "O") {
-            //go into end state, use the winner as parameter
-            if(playerTurn === true){
-                game_board.endingScreen("Player");
-            } else {
-                game_board.endingScreen("Computer");
-            }
-            game_board.wipeBoard();
-            console.log("winner");
-        } else if(boardArray[3] === "X" && boardArray[4] === "X" && boardArray[5] === "X" 
-        || boardArray[3] === "O" && boardArray[4] === "O" && boardArray[5] === "O") {
-            //go into end state, use the winner as parameter
-            if(playerTurn === true){
-                game_board.endingScreen("Player");
-            } else {
-                game_board.endingScreen("Computer");
-            }
-            game_board.wipeBoard();
-            console.log("winner");
-        } else if(boardArray[6] === "X" && boardArray[7] === "X" && boardArray[8] === "X" 
-        || boardArray[6] === "O" && boardArray[7] === "O" && boardArray[8] === "O") {
-            //go into end state, use the winner as parameter
-            if(playerTurn === true){
-                game_board.endingScreen("Player");
-            } else {
-                game_board.endingScreen("Computer");
-            }
-            game_board.wipeBoard();
-            console.log("winner");
-        } else if(boardArray[0] === "X" && boardArray[4] === "X" && boardArray[8] === "X" 
-        || boardArray[0] === "O" && boardArray[4] === "O" && boardArray[8] === "O") {
-            //go into end state, use the winner as parameter
-            if(playerTurn === true){
-                game_board.endingScreen("Player");
-            } else {
-                game_board.endingScreen("Computer");
-            }
-            game_board.wipeBoard();
-            console.log("winner");
-        } else if(boardArray[2] === "X" && boardArray[4] === "X" && boardArray[6] === "X" 
-        || boardArray[2] === "O" && boardArray[4] === "O" && boardArray[6] === "O") {
-            //go into end state, use the winner as parameter
-            if(playerTurn === true){
-                game_board.endingScreen("Player");
-            } else {
-                game_board.endingScreen("Computer");
-            }
-            game_board.wipeBoard();
-            console.log("winner");
+        || boardArray[1] === "X" && boardArray[4] === "X" && boardArray[7] === "X" 
+        || boardArray[2] === "X" && boardArray[5] === "X" && boardArray[8] === "X" 
+        || boardArray[0] === "X" && boardArray[1] === "X" && boardArray[2] === "X" 
+        || boardArray[3] === "X" && boardArray[4] === "X" && boardArray[5] === "X" 
+        || boardArray[6] === "X" && boardArray[7] === "X" && boardArray[8] === "X" 
+        || boardArray[0] === "X" && boardArray[4] === "X" && boardArray[8] === "X" 
+        || boardArray[2] === "X" && boardArray[4] === "X" && boardArray[6] === "X" 
+        || boardArray[0] === "O" && boardArray[3] === "O" && boardArray[6] === "O"
+        || boardArray[1] === "O" && boardArray[4] === "O" && boardArray[7] === "O"
+        || boardArray[2] === "O" && boardArray[5] === "O" && boardArray[8] === "O"
+        || boardArray[0] === "O" && boardArray[1] === "O" && boardArray[2] === "O"
+        || boardArray[3] === "O" && boardArray[4] === "O" && boardArray[5] === "O"
+        || boardArray[6] === "O" && boardArray[7] === "O" && boardArray[8] === "O"
+        || boardArray[0] === "O" && boardArray[4] === "O" && boardArray[8] === "O"
+        || boardArray[2] === "O" && boardArray[4] === "O" && boardArray[6] === "O"){
+            game_board.setWinner(game_board.getCurrentTurn);
         }
-    });    
+    });   
 
     return { winCondition, setCompIcon };
-})();
-
-//player creator 
-
-//player factory that returns a players name, icon, whether they're going first or second
-    //if only 1 player is set, have player 2 be run by AI. 
+})(); 
 
 
 
