@@ -3,16 +3,16 @@
 // gameboard
 let game_board = (function(){
     let boardArray = ['', '', '', '', '', '', '', '', ''];
-    let playerTurn = true;
     let playerIcon = "null";
     let computerIcon = "null";
+    let randomTile = 0;
 
     let gameTiles = document.querySelectorAll('.gameTile');
     let startScreen = document.querySelector('.preGame');
     let playScreen = document.querySelector('.playSpace');
     let endScreen = document.querySelector('.endGame');
 
-    const startingScreen = (() => {        
+    const startingScreen = (() => {       
         endScreen.setAttribute('data-state', "inactive");
         startScreen.setAttribute('data-state', 'active');
         console.log("wobwobwob");
@@ -44,6 +44,7 @@ let game_board = (function(){
         let startButton = document.getElementById("startGame");
         startButton.addEventListener("click", () => {
             if(playerIcon !== 'null'){
+                wipeBoard;
                 gameStart();
             } else {
                 console.log("Choose an icon");
@@ -53,6 +54,7 @@ let game_board = (function(){
     });
 
     const gameStart = (() => {
+        boardArray = ['', '', '', '', '', '', '', '', '']; 
         startScreen.setAttribute('data-state', 'inactive');
         playScreen.setAttribute('data-state', 'active');
         computerIcon = game_Flow.setCompIcon(playerIcon);
@@ -60,7 +62,7 @@ let game_board = (function(){
         //reset the gameBoard
         for(let i = 0; i < gameTiles.length; i++){
             gameTiles[i].addEventListener("click", () =>{
-                //check tile hasn't got anything on it
+                //check tile hasn't got anything on it                
                     if(gameTiles[i].firstChild === null){                        
                         const icon = document.createElement("img");
                         if(playerIcon === "X"){
@@ -68,7 +70,7 @@ let game_board = (function(){
                         } else {
                             icon.src = "images/O.png";
                         }                        
-                        icon.setAttribute('id', 'icon');
+                        icon.setAttribute('class', 'icon');
                         if(gameTiles[i].firstChild !== null){
                             gameTiles[i].firstChild.remove();
                         }              
@@ -80,7 +82,8 @@ let game_board = (function(){
                 //update boardArray with players choice
                 boardArray[i] = playerIcon;
                 //run function to check if win condition has been met
-                game_Flow.winCondition(playerTurn, boardArray);
+                game_Flow.winCondition(true, boardArray);
+                aiTurn();
             });
             gameTiles[i].innerHTML = boardArray[i];
 
@@ -95,16 +98,52 @@ let game_board = (function(){
         endScreen.setAttribute('data-state', 'active');
         endScreen.querySelector('p').innerHTML = `The ${winner} Wins!`;
         const resetButton = document.getElementById("endGame");
-        resetButton.addEventListener("click", () => {
-            boardArray = ['', '', '', '', '', '', '', '', ''];
-            playerIcon = "null";
-            computerIcon = "null";            
+        resetButton.addEventListener("click", () => {            
+            wipeBoard;           
             startingScreen();
         });
 
         console.log("endScreen");
     });
 
+    const aiTurn = (() => {
+        randomTile = getRandomInt(9);
+        let computerImage = document.createElement("img");
+        computerImage.setAttribute('class', 'icon');
+        if(computerIcon === "X"){
+            computerImage.src = "images/X.png";
+        } else {
+            computerImage.src = "images/O.png";
+        }
+
+        for(let i = 0; i < 1000; i++){
+            if(gameTiles[randomTile].firstChild !== null){
+                randomTile = getRandomInt(9);
+            } else {
+                gameTiles[randomTile].appendChild(computerImage);
+                boardArray[randomTile] = computerIcon;
+                break;
+            }
+        }
+        
+        game_Flow.winCondition(false, boardArray);         
+    });
+
+    const wipeBoard = (() => {
+        boardArray = boardArray = ['', '', '', '', '', '', '', '', ''];
+        for(let i = 0; i < gameTiles.length; i++){
+           gameTiles[i].firstChild = null; 
+        }
+        playerIcon = "null";
+        computerIcon = "null";
+        randomTile = 0;
+        playerTurn = true;           
+        
+    })();
+
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
 
     const getPlayerTurn = (() => {
         return playerTurn;
@@ -114,7 +153,13 @@ let game_board = (function(){
         return boardArray;
     })();
 
-    return { startingScreen, gameStart, getPlayerTurn, getBoardArray, endingScreen };
+    const getComputerIcon = (() => {
+        return computerIcon;
+    })();
+
+    
+
+    return { startingScreen, gameStart, getPlayerTurn, getBoardArray, endingScreen, getComputerIcon, wipeBoard };
 
 
 })();
@@ -150,6 +195,7 @@ let game_Flow = (function(){
             } else {
                 game_board.endingScreen("Computer");
             }
+            game_board.wipeBoard();
             console.log("winner");
         } else if(boardArray[1] === "X" && boardArray[4] === "X" && boardArray[7] === "X" 
         || boardArray[1] === "O" && boardArray[4] === "O" && boardArray[7] === "O") {
@@ -159,6 +205,7 @@ let game_Flow = (function(){
             } else {
                 game_board.endingScreen("Computer");
             }
+            game_board.wipeBoard();
             console.log("winner");
         } else if(boardArray[2] === "X" && boardArray[5] === "X" && boardArray[8] === "X" 
         || boardArray[2] === "O" && boardArray[5] === "O" && boardArray[8] === "O") {
@@ -168,6 +215,7 @@ let game_Flow = (function(){
             } else {
                 game_board.endingScreen("Computer");
             }
+            game_board.wipeBoard();
             console.log("winner");
         } else if(boardArray[0] === "X" && boardArray[1] === "X" && boardArray[2] === "X" 
         || boardArray[0] === "O" && boardArray[1] === "O" && boardArray[2] === "O") {
@@ -177,6 +225,7 @@ let game_Flow = (function(){
             } else {
                 game_board.endingScreen("Computer");
             }
+            game_board.wipeBoard();
             console.log("winner");
         } else if(boardArray[3] === "X" && boardArray[4] === "X" && boardArray[5] === "X" 
         || boardArray[3] === "O" && boardArray[4] === "O" && boardArray[5] === "O") {
@@ -186,6 +235,7 @@ let game_Flow = (function(){
             } else {
                 game_board.endingScreen("Computer");
             }
+            game_board.wipeBoard();
             console.log("winner");
         } else if(boardArray[6] === "X" && boardArray[7] === "X" && boardArray[8] === "X" 
         || boardArray[6] === "O" && boardArray[7] === "O" && boardArray[8] === "O") {
@@ -195,6 +245,7 @@ let game_Flow = (function(){
             } else {
                 game_board.endingScreen("Computer");
             }
+            game_board.wipeBoard();
             console.log("winner");
         } else if(boardArray[0] === "X" && boardArray[4] === "X" && boardArray[8] === "X" 
         || boardArray[0] === "O" && boardArray[4] === "O" && boardArray[8] === "O") {
@@ -204,21 +255,20 @@ let game_Flow = (function(){
             } else {
                 game_board.endingScreen("Computer");
             }
+            game_board.wipeBoard();
             console.log("winner");
         } else if(boardArray[2] === "X" && boardArray[4] === "X" && boardArray[6] === "X" 
         || boardArray[2] === "O" && boardArray[4] === "O" && boardArray[6] === "O") {
             //go into end state, use the winner as parameter
-            
+            if(playerTurn === true){
+                game_board.endingScreen("Player");
+            } else {
+                game_board.endingScreen("Computer");
+            }
+            game_board.wipeBoard();
             console.log("winner");
         }
-    });
-
-    const aiTurn = (() => {
-        for(let i = 0; i < game_board.getBoardArray(); i++){
-            console.log("wob");
-        }
-        game_board.getBoardArray();
-    });
+    });    
 
     return { winCondition, setCompIcon };
 })();
